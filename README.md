@@ -1,6 +1,41 @@
 # Python Analyser
 Random project
 
+## Getting started (rough)
+1. Clone this repo into the same path as the repos you want to analyse
+```
+cd /path/to/projects
+git clone git@github.com:HendrikPrinsZA/python-analyser.git
+```
+2. Search and replace "repo-name" to the repo you want to analyse
+```
+- repo_to_stats.py
+- repo_to_video.py
+- modules/GitStats.py
+```
+3. Install the dependencies
+```
+make init
+```
+4. (optional) Export a group chat and save it as storage/sources/whatsapp/export-YYYY-MM-DD.txt
+```
+touch storage/sources/whatsapp/export-2022-05-30.txt
+```
+5. Run some stuff
+```
+# Repo to video (in progress)
+python3 repo_to_video.py
+
+# Whatsapp to stats (in progress)
+python3 whatsapp_to_stats.py
+
+# Repo to avatars (not working)
+python3 repo_to_avatars.py
+
+# Repo to stats (not working)
+python3 repo_to_stats.py
+```
+
 ## Software to look into
 - https://obsproject.com/welcome
 
