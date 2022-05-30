@@ -1,0 +1,15 @@
+GitPython
+progress
+anybadge
+Pillow
+imgrender
+matplotlib
+seaborn
+matplotlib
+seaborn
+wordcloud
+nltk
+plotly
+emoji
+numpyencoder
+# heatmap
