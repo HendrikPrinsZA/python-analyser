@@ -15,7 +15,7 @@ class GitStats:
         self.path_to_base = os.path.realpath(f"{os.path.dirname(__file__)}/../")
         self.path_to_avatars = f"{self.path_to_base}/avatars"
         self.repo_names = [
-            'repo-name'
+            'repo-name',
         ]
         self.aliases = self.get_aliases()
 

@@ -3,7 +3,6 @@
 from datetime import datetime, timedelta
 import os
 import sys
-from git import Repo
 
 from modules.WhatsAppStats import WhatsAppStats
 

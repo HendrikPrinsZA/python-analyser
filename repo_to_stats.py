@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import os
-from git import Repo
 
 from modules.GitStats import GitStats
 
