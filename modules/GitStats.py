@@ -1,11 +1,9 @@
-from genericpath import exists
 from anybadge import Badge
 import os
 import pickle
 
 from git import Repo
 from progress.bar import Bar
-from PIL import Image
 
 from imgrender import render
 
