@@ -12,4 +12,7 @@ nltk
 plotly
 emoji
 numpyencoder
+urllib3
+bs4
 # heatmap
+PyGithub

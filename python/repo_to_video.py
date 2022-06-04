@@ -2,10 +2,10 @@
 
 import os
 
-BASE_DIR = os.path.realpath(f"{os.path.dirname(__file__)}/../")
+PATH_TO_BASE = os.path.realpath(f"{os.path.dirname(__file__)}/../../")
 
 def repo_to_video(repo):
-    path_to_repo = f"{BASE_DIR}/{repo}"
+    path_to_repo = f"{PATH_TO_BASE}/{repo}"
     path_to_video = f"videos/{repo}.mp4"
     
     if not os.path.isdir(path_to_repo):
