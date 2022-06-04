@@ -1,9 +1,12 @@
 export default {
-  // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
-  // ssr: false,
-  ssr: true,
+  server: {
+    port: 3000 // default
+  },
+  
+  ssr: true, // Server-side rendering (maybe needed?)
 
-  // Global page headers: https://go.nuxtjs.dev/config-head
+  // Global page headers
+  // see https://go.nuxtjs.dev/config-head
   head: {
     title: 'python-analyser-nuxt',
     htmlAttrs: {
@@ -18,33 +21,27 @@ export default {
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
   },
 
-  // Global CSS: https://go.nuxtjs.dev/config-css
+  // Global CSS
+  // see https://go.nuxtjs.dev/config-css
   css: [],
 
-  // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
+  // Plugins to run before rendering page
+  // see https://go.nuxtjs.dev/config-plugins
   plugins: [],
 
-  // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
 
-  // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
-    // https://go.nuxtjs.dev/tailwindcss
     '@nuxtjs/tailwindcss',
   ],
 
-  // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
-    // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
   ],
 
-  // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
     baseURL: '/',
   },
 
-  // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {},
 }

@@ -1,4 +1,5 @@
 import hashlib
+import shutil
 from anybadge import Badge
 import os
 import pickle
@@ -6,7 +7,6 @@ import pickle
 from git import Repo
 from progress.bar import Bar
 from imgrender import render
-from bs4 import BeautifulSoup
 import urllib
 
 import requests
@@ -17,6 +17,11 @@ class RepoAvatars:
     def __init__(self, path_to_base: str, repo_names: list) -> None:
         self.path_to_base = path_to_base
 
+        # allowed extensions, order of preference
+        self.allowed_extensions = [
+            'svg', 'png', 'jpg', 'jpeg'
+        ]
+
         # Set repository paths
         self.repo_names = repo_names
         self.repo_paths = []
@@ -25,58 +30,104 @@ class RepoAvatars:
             self.repo_paths.append(f"{self.path_to_base}/{repo_name}")
 
         # Storage directory
-        self.path_to_avatars = f"{path_to_storage()}/avatars"
-        self.path_to_badges = f"{self.path_to_avatars}/1-badges"
-        self.path_to_gravatars = f"{self.path_to_avatars}/2-gravatars"
-        self.path_to_github = f"{self.path_to_avatars}/3-github"
-        self.path_to_custom = f"{self.path_to_avatars}/9-custom"
-        self.path_to_final = f"{self.path_to_avatars}/69-final"
+        self.path_to_storage = path_to_storage()
+        self.path_to_avatars = f"{self.path_to_storage}/avatars"
 
-        dir_paths = [
-            self.path_to_badges,
-            self.path_to_gravatars,
-            self.path_to_github,
-            self.path_to_custom,
-            self.path_to_final
-        ]
-
-        for path_to_dir in dir_paths:
-            if not os.path.isdir(path_to_dir):
-                os.makedirs(path_to_dir, exist_ok=True)
+        self.path_to = dict({
+            'badges': f"{self.path_to_avatars}/1-badges",
+            'gravatars': f"{self.path_to_avatars}/2-gravatars",
+            'github': f"{self.path_to_avatars}/3-github-avatars",
+            'custom': f"{self.path_to_avatars}/9-custom-selfies",
+            'final': f"{self.path_to_avatars}/69-final"
+        })
 
     def generate_avatars(self):
-        aliases = self.get_aliases()
+        aliases = self.get_aliases_from_repos()
 
-        # badges
+        bar = Bar(f"Generating avatars as badges", max=len(aliases))
         for alias in aliases:
-            path = self.create_badge(alias)
-            if path is not None:
-                print(f"Created badge for: {alias} at {path}")
+            self.create_alias_badge(alias)
+            bar.next()
+        bar.finish()
 
-        # gravatars
+        bar = Bar(f"Generating avatars from gravatar", max=len(aliases))
         for alias in aliases:
-            alias_usernames = aliases[alias]
-            path_to_gravatar = self.create_gravatar(alias, alias_usernames)
+            self.create_alias_gravatar(alias, aliases[alias])
+            bar.next()
+        bar.finish()
 
-            if path_to_gravatar is not None:
-                print(f"Created gravatar for: {alias} at {path_to_gravatar}")
-
-        # github
+        bar = Bar(f"Generating avatars from github", max=len(aliases))
         for alias in aliases:
-            alias_usernames = aliases[alias]
-            path_to_gravatar = self.create_github(alias, alias_usernames)
+            self.create_alias_github_avatar(alias, aliases[alias])
+            bar.next()
+        bar.finish()
 
-            if path_to_gravatar is not None:
-                print(f"Created gravatar for: {alias} at {path_to_gravatar}")
+        self.create_alias_avatars_final()
 
-    def create_badge(self, fullname: str) -> str:
-        path_to_badge = f"{self.path_to_badges}/{fullname}.svg"
+    def create_alias_avatars_final(self) -> None:
+        """
+        Create the final aliases
+        - display the avatars for each alias
+        - create a lookup file, like avatars.json
+        """
+
+        # Note: this feels more confusing than moving it to __init__??? Nastia???
+        # I want to have self.aliases
+        aliases = self.get_aliases_from_repos()
+
+        alias_avatars = dict({})
+
+        bar = Bar("Generating avatars final", max=len(aliases))
+        for alias in aliases:
+            alias_avatars[alias] = self.create_alias_final(alias)
+            bar.next()
+        bar.finish()
+
+        for alias in alias_avatars:
+            _, avatar_extension, path_to_avatar = alias_avatars[alias]
+
+            print(f"alias: {alias} -> {path_to_avatar}")
+
+            if avatar_extension == 'svg':
+                print(f"Cannot render SVG: {path_to_avatar}")
+                continue
+
+            render(path_to_avatar, (16, 16))
+
+    def create_alias_final(self, fullname: str) -> str and str and str:
+        """
+        Walk through the avatar paths in reverse order
+        - copy the first match to 69-final to be used as primary
+        """
+        path_to_final_dir = self.path_to.get('final')
+        path_dir_reversed = self.path_to.copy().__reversed__()
+
+        for path_to_dir in path_dir_reversed:
+            if path_to_dir == 'final':
+                continue
+
+            path_to_avatar_dir = self.path_to[path_to_dir]
+
+            for avatar_extension in self.allowed_extensions:
+                path_to_avatar = f"{path_to_avatar_dir}/{fullname}.{avatar_extension}"
+                path_to_final = f"{path_to_final_dir}/{fullname}.{avatar_extension}"
+
+                if os.path.exists(path_to_avatar):
+                    shutil.copyfile(path_to_avatar, path_to_final)
+                    
+                    return path_to_dir, avatar_extension, path_to_avatar
+    
+        print("Unhandled exception: We should never really reach here!")
+        exit(1)
+
+    def create_alias_badge(self, fullname: str) -> str:
+        path_to_badge = f"{self.path_to.get('badges')}/{fullname}.svg"
 
         if os.path.isfile(path_to_badge):
             return None
 
         badge = Badge(
-            'alias',
+            'Alias',
             fullname,
             font_size=11,
             num_padding_chars=0.5,
@@ -97,7 +148,7 @@ class RepoAvatars:
 
         return gravatar_url
 
-    def create_gravatar(self, fullname: str, usernames: list) -> str:
+    def create_alias_gravatar(self, fullname: str, usernames: list) -> str:
         path_to_gravatar = None
         for username in usernames:
             url = self.get_gravatar_url(username)
@@ -109,7 +160,7 @@ class RepoAvatars:
             if not response.content:
                 continue
 
-            path_to_gravatar = f"{self.path_to_gravatars}/{fullname}.png"
+            path_to_gravatar = f"{self.path_to.get('gravatars')}/{fullname}.png"
             if os.path.isfile(path_to_gravatar):
                 return None
 
@@ -119,18 +170,8 @@ class RepoAvatars:
 
         return path_to_gravatar
 
-    def create_github(self, fullname: str, usernames: list) -> str:
+    def create_alias_github_avatar(self, fullname: str, usernames: list) -> str:
         return None
-
-    def get_avatars(self):
-        path_to_badges = f"{self.path_to_avatars}/badges"
-
-        # For testing only
-        if not os.path.isdir(path_to_badges):
-            os.makedirs(path_to_badges, exist_ok=True)
-
-        for fullname in self.aliases.keys():
-            self.create_badge(fullname)
 
     def print_aliases(self):
         path_to_default_avatar = f"{self.path_to_avatars}/_default.png"
@@ -157,7 +198,7 @@ class RepoAvatars:
             print(f"The following aliases don't have avatars: \n- {facelesst_list}")
 
 
-    def get_aliases(self) -> dict:
+    def get_aliases_from_repos(self) -> dict:
         aliases = dict()
         for repo_path in self.repo_paths:
             repo_name = os.path.basename(repo_path)

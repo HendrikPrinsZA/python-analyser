@@ -19,4 +19,11 @@ def save_data_as_json(data: list, path_to_file: str) -> None:
 # Get the path to storage from anywhere
 def path_to_storage() -> str:
     path_to_storage = os.path.realpath(f"{os.path.dirname(__file__)}/../../storage")
-    return path_to_storage
+    return asb_to_relative_path(path_to_storage)
+
+def asb_to_relative_path(abs_path:str) -> str:
+    path_to_storage = os.path.realpath(f"{os.path.dirname(__file__)}/../../")
+    relative_path = abs_path.replace(path_to_storage, '')
+    relative_path = f".{relative_path}"
+
+    return relative_path

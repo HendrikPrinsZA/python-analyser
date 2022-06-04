@@ -15,6 +15,6 @@ export default {
       renderer: process.server ? "server" : "client"
     };
   },
-  components: { NavTop }
+  components: { NavTop },
 }
 </script>

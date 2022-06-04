@@ -11,7 +11,8 @@
     "lint": "npm run lint:prettier",
     "lintfix": "prettier --write --list-different .",
     "prepare": "husky install",
-    "test": "jest"
+    "test": "jest",
+    "tools:avatars": "python3 tools/repo_to_avatars.py"
   },
   "lint-staged": {
     "*.**": "prettier --check --ignore-unknown"
