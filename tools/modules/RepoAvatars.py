@@ -11,13 +11,12 @@ from imgrender import render
 import urllib
 import requests
 
-from modules.helpers import path_to_storage, is_email_address, wait_until
+from modules.helpers import path_to_storage, is_email_address, wait_until, get_repo_paths
 
 LOCAL_TIMEZONE = datetime.now(timezone.utc).astimezone().tzinfo
 
 class RepoAvatars:
-    def __init__(self, path_to_base: str, repo_names: list) -> None:
-        self.path_to_base = path_to_base
+    def __init__(self) -> None:
 
         # allowed extensions, order of preference
         self.allowed_extensions = [
@@ -25,11 +24,7 @@ class RepoAvatars:
         ]
 
         # Set repository paths
-        self.repo_names = repo_names
-        self.repo_paths = []
-        for repo_name in self.repo_names:
-            # To-do: Exception handling if not git repo
-            self.repo_paths.append(f"{self.path_to_base}/{repo_name}")
+        self.repo_paths = get_repo_paths()
 
         # Storage directory
         self.path_to_storage = path_to_storage()
@@ -65,7 +60,7 @@ class RepoAvatars:
         bar.finish()
 
         self.create_alias_avatars_final()
-
+        
     def create_alias_avatars_final(self) -> None:
         """
         Create the final aliases
