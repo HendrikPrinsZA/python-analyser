@@ -1,17 +1,19 @@
+from datetime import datetime, timezone
 import hashlib
+import json
 import shutil
 from anybadge import Badge
 import os
 import pickle
-
 from git import Repo
 from progress.bar import Bar
 from imgrender import render
 import urllib
-
 import requests
 
-from modules.helpers import path_to_storage
+from modules.helpers import path_to_storage, is_email_address, wait_until
+
+LOCAL_TIMEZONE = datetime.now(timezone.utc).astimezone().tzinfo
 
 class RepoAvatars:
     def __init__(self, path_to_base: str, repo_names: list) -> None:
@@ -84,9 +86,9 @@ class RepoAvatars:
         bar.finish()
 
         for alias in alias_avatars:
-            _, avatar_extension, path_to_avatar = alias_avatars[alias]
+            path_to_dir, avatar_extension, path_to_avatar = alias_avatars[alias]
 
-            print(f"alias: {alias} -> {path_to_avatar}")
+            print(f"alias: {alias} from {path_to_dir}")
 
             if avatar_extension == 'svg':
                 print(f"Cannot render SVG: {path_to_avatar}")
@@ -114,7 +116,6 @@ class RepoAvatars:
 
                 if os.path.exists(path_to_avatar):
                     shutil.copyfile(path_to_avatar, path_to_final)
-                    
                     return path_to_dir, avatar_extension, path_to_avatar
     
         print("Unhandled exception: We should never really reach here!")
@@ -149,64 +150,76 @@ class RepoAvatars:
         return gravatar_url
 
     def create_alias_gravatar(self, fullname: str, usernames: list) -> str:
-        path_to_gravatar = None
         for username in usernames:
-            url = self.get_gravatar_url(username)
-            response = requests.get(url, stream=True)
-
-            if not response.ok:
-                continue
-
-            if not response.content:
-                continue
-
             path_to_gravatar = f"{self.path_to.get('gravatars')}/{fullname}.png"
             if os.path.isfile(path_to_gravatar):
-                return None
+                continue
+            
+            url = self.get_gravatar_url(username)
+            return self.download_image(url, path_to_gravatar)
 
-            with open(path_to_gravatar, 'wb') as file_handler:
-                file_handler.write(response.content)
-                file_handler.close()
-
-        return path_to_gravatar
-
-    def create_alias_github_avatar(self, fullname: str, usernames: list) -> str:
         return None
 
-    def print_aliases(self):
-        path_to_default_avatar = f"{self.path_to_avatars}/_default.png"
+    def download_image(self, url:str, target_path:str) -> str:
+        response = requests.get(url, stream=True)
 
-        facelesst = []
-        for fullname in self.aliases.keys():
-            print(f"{fullname}: {','.join(self.aliases.get(fullname))}")
-            
-            found = False
-            for ext in ['jpeg', 'png', 'svg']:
-                path_to_avatar = os.path.realpath(f"{self.path_to_avatars}/{fullname}.{ext}")
+        if not response.ok:
+            return None
 
-                if os.path.isfile(path_to_avatar):
-                    render(path_to_avatar, (32, 32))
-                    found = True
-                    break
-
-            if not found:
-                facelesst.append(fullname)
-                render(path_to_default_avatar, (32, 32))
+        if not response.content:
+            return None
         
-        if len(facelesst) > 0:
-            facelesst_list = '\n- '.join(facelesst)
-            print(f"The following aliases don't have avatars: \n- {facelesst_list}")
+        with open(target_path, 'wb') as file_handler:
+            file_handler.write(response.content)
+            file_handler.close()
+        
+        return target_path
 
+    def get_github_avatar_url(self, username: str) -> str:
+        if not is_email_address(username):
+            None
+
+        response = requests.get(f"https://api.github.com/search/users?q={username}", stream=True)
+
+        if response.status_code != 200:
+            wait = float(response.headers.get('x-ratelimit-reset'))
+
+            if wait > 0:
+                dt_wait = datetime.fromtimestamp(wait, tz=LOCAL_TIMEZONE)
+                wait_until(dt_wait)
+                return self.get_github_avatar_url(username)
+
+            print(f"Uncaught exception, status_code = {response.status_code}")
+            exit(1)
+
+        username = None
+        try: 
+            data = json.loads(response.content)
+            return data['items'][0]['avatar_url']
+        except: 
+            return None
+
+    def create_alias_github_avatar(self, fullname: str, usernames: list) -> str:
+        for username in usernames:
+            path_to_image = f"{self.path_to.get('github')}/{fullname}.png"
+            if os.path.isfile(path_to_image):
+                continue
+
+            github_avatar_url = self.get_github_avatar_url(username)
+
+            if github_avatar_url is not None:
+                dl_path = self.download_image(github_avatar_url, path_to_image)
+
+                if dl_path is not None:
+                    return dl_path
+                    
+        return None
 
     def get_aliases_from_repos(self) -> dict:
         aliases = dict()
         for repo_path in self.repo_paths:
             repo_name = os.path.basename(repo_path)
             repo_cache_path = f"{self.path_to_avatars}/{repo_name}-aliases.pkl"
-
-            # Debugging: clear cache
-            # if os.path.isfile(repo_cache_path):
-            #     os.remove(repo_cache_path)
 
             if os.path.isfile(repo_cache_path):
                 with open(repo_cache_path, 'rb') as file_handler:
@@ -219,18 +232,10 @@ class RepoAvatars:
                     pickle.dump(repo_aliases, file_handler)
                     file_handler.close()
 
-            aliases = self.merge_aliases(aliases, repo_aliases)
+            aliases = self.merge_dicts(aliases, repo_aliases)
         
         return aliases
 
-    def append_alias(self, aliases: dict, fullname: str, username: str) -> dict:
-        if fullname not in aliases.keys():
-            aliases[fullname] = list()
-
-        if username not in aliases[fullname]:
-            aliases[fullname].append(username)
-        
-        return aliases
 
     def repo_to_aliases_slow(self, repo_path: str) -> dict:
         aliases = dict()
@@ -253,34 +258,30 @@ class RepoAvatars:
         bar.finish()
         return aliases
 
-    def repo_to_stats(self, repo_path: str) -> dict:
-        stats = dict()
-        repo = Repo(repo_path)
+    def append_alias(self, aliases: dict, fullname: str, username: str) -> dict:
+        if fullname not in aliases.keys():
+            aliases[fullname] = list()
 
-        commits = list(repo.iter_commits())
-        commits_count = len(commits)
-
-        bar = Bar(f"Finding stats for {repo_path}", max=commits_count)
-        for commit in commits:
-            alias_parts = repo.git.show("-s", "--format=%an|%ae", commit.hexsha)
-            alias_parts = alias_parts.split('|')
-
-            alias_fullname = alias_parts[0]
-            alias_username = alias_parts[1]
-            
-            bar.next()
+        if username not in aliases[fullname]:
+            aliases[fullname].append(username)
         
-        bar.finish()
-        return stats
+        return aliases
     
-    def merge_aliases(self, aliasesA: dict, aliasesB: dict) -> dict:
+    def merge_dicts(self, aliases_1: dict, aliases_2: dict) -> dict:
+        """
+        Merge two alias dicts
+
+        Future idea:
+        - Intercept here to build global cache
+        - Rename to merge_dicks
+        """
         aliases = dict()
-        for fullname in aliasesA.keys():
-            for username in aliasesA[fullname]:
+        for fullname in aliases_1.keys():
+            for username in aliases_1[fullname]:
                 aliases = self.append_alias(aliases, fullname, username)
 
-        for fullname in aliasesB.keys():
-            for username in aliasesB[fullname]:
+        for fullname in aliases_2.keys():
+            for username in aliases_2[fullname]:
                 aliases = self.append_alias(aliases, fullname, username)
         
         return aliases

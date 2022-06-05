@@ -1,7 +1,15 @@
 import json
+from math import ceil
 import os
+import re
+from datetime import datetime, timezone
+from progress.bar import Bar
+from time import sleep
 import numpy as np
+from pytime import pytime
 from numpyencoder import NumpyEncoder
+
+LOCAL_TIMEZONE = datetime.now(timezone.utc).astimezone().tzinfo
 
 def save_data_as_json(data: list, path_to_file: str) -> None:
     numpy_data = np.array(data)
@@ -27,3 +35,22 @@ def asb_to_relative_path(abs_path:str) -> str:
     relative_path = f".{relative_path}"
 
     return relative_path
+
+def is_email_address(string:str) -> bool:
+   pat = "^[a-zA-Z0-9-_]+@[a-zA-Z0-9]+\.[a-z]{1,3}$"
+   if re.match(pat,string):
+      return True
+   return False
+
+def wait_until(expiration:datetime) -> bool:
+    now = datetime.now(tz=LOCAL_TIMEZONE)
+    expiration_human = expiration.__format__("%Y-%m-%d %H:%M:%S")
+    
+    seconds = ceil((expiration - now).total_seconds())
+    bar = Bar(f"Waiting for {seconds}s ({expiration_human})", max=seconds)
+    for _ in range(seconds):
+        bar.next()
+        sleep(1)
+    bar.finish()
+
+    return True

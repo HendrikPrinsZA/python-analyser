@@ -5,7 +5,7 @@ import os
 from modules.RepoAvatars import RepoAvatars
 
 REPO_NAMES = [
-  'vesper-forge'
+  'repo-name'
 ]
 
 PATH_TO_BASE = os.path.realpath(f"{os.path.dirname(__file__)}/../../")
