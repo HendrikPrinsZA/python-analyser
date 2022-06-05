@@ -94,9 +94,11 @@ def wait_until(expiration:datetime) -> bool:
     expiration_human = expiration.__format__("%Y-%m-%d %H:%M:%S")
     
     seconds = ceil((expiration - now).total_seconds())
-    bar = Bar(f"Waiting for {seconds}s ({expiration_human})", max=seconds)
-    for _ in range(seconds):
+    bar = Bar(f"Waiting for {seconds}s", max=seconds)
+    for i in range(seconds):
         bar.next()
+        time_left = seconds - i
+        bar.message = f"Waiting for {time_left}s"
         sleep(1)
     bar.finish()
 

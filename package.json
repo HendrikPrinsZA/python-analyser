@@ -12,7 +12,7 @@
     "lintfix": "prettier --write --list-different .",
     "prepare": "husky install",
     "test": "jest",
-    "tools:avatars": "python3 tools/repo_to_avatars.py"
+    "tools:repos-to-avatars": "python3 tools/repos_to_avatars.py"
   },
   "lint-staged": {
     "*.**": "prettier --check --ignore-unknown"
