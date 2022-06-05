@@ -21,7 +21,6 @@ LINK_REGEX = r"""((?:(?:https|ftp|http)?:(?:/{1,3}|[a-z0-9%])|[a-z0-9.\-]+[.](?:
 MEDIA_REGEX = r'(GIF|image|video) omitted'
 NOTIFICATION_REGEX = r'(created this group|added you)'
 IGNORE_WORDS_REGEX = r'(happy|birthday|thank|https)'
-# IGNORE_WORDS_REGEX = r'(thank|https)'
 
 # Source: https://www.analyticsvidhya.com/blog/2021/04/whatsapp-group-chat-analyzer-using-python/
 class WhatsAppStats:

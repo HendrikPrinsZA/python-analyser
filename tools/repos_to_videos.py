@@ -2,11 +2,20 @@
 
 import os
 
-PATH_TO_BASE = os.path.realpath(f"{os.path.dirname(__file__)}/../../")
+from modules.helpers import *
 
-def repo_to_video(repo):
-    path_to_repo = f"{PATH_TO_BASE}/{repo}"
-    path_to_video = f"videos/{repo}.mp4"
+def repo_to_video(path_to_repo:str) -> None:
+    repo_name = os.path.basename(path_to_repo)
+    path_to_storage = get_path_to_storage()
+    
+    instance_id = get_instance_id()
+    path_to_videos = f"{path_to_storage}/instances/{instance_id}/videos"
+    path_to_video = f"{path_to_videos}/{repo_name}.mp4"
+    path_to_avatars = f"{path_to_storage}/avatars/69-final"
+
+    if not os.path.isdir(path_to_videos):
+        os.makedirs(path_to_videos, exist_ok=True)
+        print(f"Created new dir: {path_to_videos}")
     
     if not os.path.isdir(path_to_repo):
         print(f"Could not find repo at {path_to_repo}")
@@ -29,10 +38,10 @@ def repo_to_video(repo):
 
     gource_args = [
         "--start-date '2022-04-01'",
-        '--user-image-dir avatars/selfies',
-        '--default-user-image avatars/selfies/_default.png',
+        f"--user-image-dir '{path_to_avatars}'",
+        f"--default-user-image '{path_to_avatars}/_default.png'",
         '--fixed-user-size',
-        f"--title '{repo}'",
+        f"--title '{repo_name}'",
         '--date-format "%Y-%m-%d %H:%M:%S"',
         '--hide dirnames,filenames',
         '--seconds-per-day 1',
@@ -48,4 +57,7 @@ def repo_to_video(repo):
     print(f"Executing: {gource_cmd}")
     os.system(gource_cmd)
 
-repo_to_video('repo-name')
+repo_paths = get_repo_paths()
+for repo_path in repo_paths:
+    repo_to_video(repo_path)
+

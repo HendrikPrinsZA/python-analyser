@@ -11,7 +11,7 @@ from imgrender import render
 import urllib
 import requests
 
-from modules.helpers import path_to_storage, is_email_address, wait_until, get_repo_paths
+from modules.helpers import *
 
 LOCAL_TIMEZONE = datetime.now(timezone.utc).astimezone().tzinfo
 
@@ -27,7 +27,7 @@ class RepoAvatars:
         self.repo_paths = get_repo_paths()
 
         # Storage directory
-        self.path_to_storage = path_to_storage()
+        self.path_to_storage = get_path_to_storage()
         self.path_to_avatars = f"{self.path_to_storage}/avatars"
 
         self.path_to = dict({

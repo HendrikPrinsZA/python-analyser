@@ -8,7 +8,16 @@ from time import sleep
 import numpy as np
 from numpyencoder import NumpyEncoder
 
+_SCRIPT_DATETIME = datetime.now()
 LOCAL_TIMEZONE = datetime.now(timezone.utc).astimezone().tzinfo
+
+def get_instance_id() -> str:
+    """
+    Returns a unique id to be used for the instance
+
+    Currently, this is the date and time the script started executing
+    """
+    return _SCRIPT_DATETIME.__format__("%Y%m%d_%H%M%S")
 
 def save_data_as_json(data: list, path_to_file: str) -> None:
     """
@@ -56,9 +65,9 @@ def get_repo_paths() -> list:
 
         repo_paths.append(repo_path)
     
-    return repo_names
+    return repo_paths
 
-def path_to_storage() -> str:
+def get_path_to_storage() -> str:
     """
     Get the absolute path to storage from anywhere
     """
