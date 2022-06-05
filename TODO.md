@@ -21,14 +21,14 @@
 
 ## Generate videos from repos
 - Refactor storage
-  - `storage/repo/{repo_name}/videos/{date}/`
+  - `storage/repos/{repo_name}/videos/{date}/`
 - Refactor entry command
   - `npm run tools:repos-to-videos`
 - Use repo names from config
 
 ## Generate stats from repos
 - Refactor storage
-  - `storage/repo/{repo_name}/stats/{date}/`
+  - `storage/repos/{repo_name}/stats/{date}/`
 - Refactor entry command
   - `npm run tools:repos-to-stats`
 - Use repo names from config
