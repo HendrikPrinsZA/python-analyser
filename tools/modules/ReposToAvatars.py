@@ -15,30 +15,26 @@ from modules.helpers import *
 
 LOCAL_TIMEZONE = datetime.now(timezone.utc).astimezone().tzinfo
 
-class RepoAvatars:
+class ReposToAvatars:
     def __init__(self) -> None:
-
+        self.repo_paths = get_repo_paths()
+        self.path_to_storage = get_path_to_storage()
+        self.path_to_avatars = f"{self.path_to_storage}/avatars"
+        
         # allowed extensions, order of preference
         self.allowed_extensions = [
             'svg', 'png', 'jpg', 'jpeg'
         ]
 
-        # Set repository paths
-        self.repo_paths = get_repo_paths()
-
-        # Storage directory
-        self.path_to_storage = get_path_to_storage()
-        self.path_to_avatars = f"{self.path_to_storage}/avatars"
-
         self.path_to = dict({
-            'badges': f"{self.path_to_avatars}/1-badges",
-            'gravatars': f"{self.path_to_avatars}/2-gravatars",
-            'github': f"{self.path_to_avatars}/3-github-avatars",
-            'custom': f"{self.path_to_avatars}/9-custom-selfies",
+            'badges': f"{self.path_to_avatars}/01-badges",
+            'gravatars': f"{self.path_to_avatars}/02-gravatars",
+            'github': f"{self.path_to_avatars}/03-github-avatars",
+            'custom': f"{self.path_to_avatars}/09-custom-selfies",
             'final': f"{self.path_to_avatars}/69-final"
         })
 
-    def generate_avatars(self):
+    def generate(self):
         aliases = self.get_aliases_from_repos()
 
         bar = Bar(f"Generating avatars as badges", max=len(aliases))

@@ -3,6 +3,7 @@ from math import ceil
 import os
 import re
 from datetime import datetime, timezone
+from typing import Any
 from progress.bar import Bar
 from time import sleep
 import numpy as np
@@ -19,11 +20,11 @@ def get_instance_id() -> str:
     """
     return _SCRIPT_DATETIME.__format__("%Y%m%d_%H%M%S")
 
-def save_data_as_json(data: list, path_to_file: str) -> None:
+def save_list_as_json(list: list, path_to_file: str) -> str:
     """
-    Saves the data as JSON by safely converting with numpy
+    Saves the list as JSON by safely converting with numpy
     """
-    numpy_data = np.array(data)
+    numpy_data = np.array(list)
     with open(path_to_file, 'w') as file_handler:
         json.dump(
             numpy_data, 
@@ -34,6 +35,28 @@ def save_data_as_json(data: list, path_to_file: str) -> None:
             ensure_ascii=False,
             cls=NumpyEncoder
         )
+        file_handler.close()
+    
+    return path_to_file
+
+def save_object_as_json(object: Any, path_to_file: str) -> str:
+    """
+    Saves the object as JSON by safely converting with numpy
+    """
+    with open(path_to_file, 'w') as file_handler:
+        json.dump(
+            object,
+            file_handler,
+            indent=4,
+            sort_keys=True,
+            separators=(', ', ': '), 
+            ensure_ascii=False,
+            cls=NumpyEncoder,
+            default=str
+        )
+        file_handler.close()
+
+    return path_to_file
 
 def get_repo_names() -> list:
     """

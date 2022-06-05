@@ -25,17 +25,14 @@
 - Refactor entry command
   - `npm run tools:repos-to-videos`
 
-## Generate stats from repos
+## Generate stats from repos (done)
 - Use repo names from config
 - Refactor storage
   - `storage/instances/{instance_id}/stats/general.json`
   - `storage/instances/{instance_id}/stats/commits.json`
-  - `storage/instances/{instance_id}/stats/general-{repo-name}.json`
-  - `storage/instances/{instance_id}/stats/commits-{repo-name}.json`
 - Refactor entry command
   - `npm run tools:repos-to-stats`
-- Generic repo stats
-- Commit history strings for scroller
+- Commit history strings for scroller (pending)
 
 ## Generate stats from WhatsApp group chat
 - Refactor storage

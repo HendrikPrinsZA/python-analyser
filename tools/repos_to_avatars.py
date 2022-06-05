@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from modules.RepoAvatars import RepoAvatars
+from modules.ReposToAvatars import ReposToAvatars
 
-repoAvatars = RepoAvatars()
-repoAvatars.generate_avatars()
+reposToAvatars = ReposToAvatars()
+reposToAvatars.generate()

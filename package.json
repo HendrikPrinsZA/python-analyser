@@ -13,7 +13,8 @@
     "prepare": "husky install",
     "test": "jest",
     "tools:repos_to_avatars": "python3 tools/repos_to_avatars.py",
-    "tools:repos_to_videos": "python3 tools/repos_to_videos.py"
+    "tools:repos_to_videos": "python3 tools/repos_to_videos.py",
+    "tools:repos_to_stats": "python3 tools/repos_to_stats.py"
   },
   "lint-staged": {
     "*.**": "prettier --check --ignore-unknown"

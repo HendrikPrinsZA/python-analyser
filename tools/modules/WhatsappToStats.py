@@ -1,21 +1,16 @@
 import re
-from typing import Tuple
 from xmlrpc.client import Boolean
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
 from datetime import *
-import datetime as dt
+import datetime as dt # To-do: convert to datetime
 from matplotlib.ticker import MaxNLocator
-import regex
-import emoji
 from seaborn import *
-from wordcloud import WordCloud , STOPWORDS , ImageColorGenerator
+from wordcloud import WordCloud,STOPWORDS
 from nltk import *
-from plotly import express as px
 
-from modules.helpers import save_data_as_json
+from modules.helpers import save_list_as_json
 
 LINK_REGEX = r"""((?:(?:https|ftp|http)?:(?:/{1,3}|[a-z0-9%])|[a-z0-9.\-]+[.](?:com|org|uk)/)(?:[^\s()<>{}\[\]]+|\([^\s()]*?\([^\s()]+\)[^\s()]*?\)|\([^\s]+?\))+(?:\([^\s()]*?\([^\s()]+\)[^\s()]*?\)|\([^\s]+?\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’])|(?:(?<!@)[a-z0-9]+(?:[.\-][a-z0-9]+)*[.](?:com|uk|ac)\b/?(?!@)))"""
 MEDIA_REGEX = r'(GIF|image|video) omitted'
@@ -23,7 +18,7 @@ NOTIFICATION_REGEX = r'(created this group|added you)'
 IGNORE_WORDS_REGEX = r'(happy|birthday|thank|https)'
 
 # Source: https://www.analyticsvidhya.com/blog/2021/04/whatsapp-group-chat-analyzer-using-python/
-class WhatsAppStats:
+class WhatsappToStats:
     def __init__(self, file_path: str, datetime_from: datetime) -> None:
         if not os.path.isfile(file_path):
             print(f"Unable to find the file '{file_path}'")
@@ -395,12 +390,12 @@ class WhatsAppStats:
 
         self.totals = self.get_totals(self.data_frame)
         path_to_file = f"{self.path_to_reports}/{self.today}-totals.json"
-        save_data_as_json(self.totals, path_to_file)
+        save_list_as_json(self.totals, path_to_file)
         print(f"Saved as {path_to_file}")
         
         self.stats_per_author = self.get_stats_per_author(self.data_frame)
         path_to_file = f"{self.path_to_reports}/{self.today}-author-stats.json"
-        save_data_as_json(self.stats_per_author, path_to_file)
+        save_list_as_json(self.stats_per_author, path_to_file)
         print(f"Saved as {path_to_file}")
 
         self.graph_top10_messages(self.data_frame)
