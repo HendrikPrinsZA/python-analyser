@@ -212,6 +212,9 @@ class RepoAvatars:
 
                 if dl_path is not None:
                     return dl_path
+                
+                # To-do: Copy default image (to prevent loading again) 
+                # - alternatively catch from parent and cache
                     
         return None
 
