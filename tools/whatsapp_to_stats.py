@@ -1,20 +1,40 @@
 #!/usr/bin/env python3
 
-from datetime import datetime, timedelta
-import os
-import sys
-
+import argparse
+from dateutil.relativedelta import relativedelta
+from datetime import datetime
+from modules.helpers import *
 from modules.WhatsappToStats import WhatsappToStats
 
-TODAY = datetime.now().strftime("%Y-%m-%d")
-PATH_TO_WA_FILE = os.path.realpath(f"{os.path.dirname(__file__)}/storage/sources/whatsapp/export-{TODAY}.txt")
+TODAY = datetime.now().strftime('%Y-%m-%d')
 
-try:
-    DATETIME_FROM = datetime.strptime(sys.argv[1], '%Y-%m-%d')
-except:
-    DATETIME_FROM = datetime.today() - timedelta(days=30)
-    print(f"Warning: DATETIME_FROM defaulted to '{DATETIME_FROM}'")
+parser = argparse.ArgumentParser(description='Get WhatsApp group stats from export')
+parser.add_argument(
+    '--filepath',
+    help='Relative path top the export', 
+    default=f"{get_path_to_storage()}/sources/whatsapp/export-{TODAY}.txt"
+)
+parser.add_argument(
+    'period',
+    help='The period to filter the data', 
+    choices=['1m', '3m', '1yr', '3yr'],
+    default='1m'
+)
+args = parser.parse_args()
 
-whatsappToStats = WhatsappToStats(PATH_TO_WA_FILE, DATETIME_FROM)
+if args.period == '1m':
+    dateFrom = datetime.now() - relativedelta(days=30)
+elif args.period == '3m':
+    dateFrom = datetime.now() - relativedelta(months=3)
+elif args.period == '1yr':
+    dateFrom = datetime.now() - relativedelta(years=1)
+elif args.period == '3yr':
+    dateFrom = datetime.now() - relativedelta(years=3)
+else:
+    print(f"Error: Unexpected args.period of {args.period}")
 
-whatsappToStats.show_data()
+dateFromString = dateFrom.__format__("%Y-%m-%d %H:%M:%S")
+print(f"Generating stats since {args.filepath} ({dateFromString})")
+print(f" --filepath={args.filepath}")
+print(f" --period={args.period}")
+exit(0)

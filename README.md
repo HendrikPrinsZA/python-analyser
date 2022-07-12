@@ -7,34 +7,31 @@ Random project
 - https://obsproject.com/welcome
 
 ## Requirements (Brew)
-- Gource
+- Gource: `brew install gource`
+- ffmpeg: `brew install ffmpeg`
+- arzzen/git-quick-stats: `brew install git-quick-stats`
+
+## Requirements (Python)
+- Dependencies: `python3 -m pip install -r requirements.txt`
+
+### WhatsApp
+Generate stats from whatsapp exports
+
+#### Steps 
+1. Export a group chat 
+2. Save as `storage/sources/whatsapp/export-2022-07-12.txt` (today's date)
+3. Get the stats
 ```
-brew install gource
-```
-- ffmpeg
-```
-brew install ffmpeg
-```
-- https://github.com/arzzen/git-quick-stats#macos-homebrew
-```
-brew install git-quick-stats
+npm run tools:whatsapp_to_stats
 ```
 
-## Requirements (NPM)
-- See https://github.com/IonicaBizau/git-stats
-```
-npm i --save-dev git-stats
-```
+### GitHub
+Get stats from GitHub repositories
 
-## Getting started
-```
-direnv allow .envrc
-python3 -m venv .
-```
+#### Steps
+Add steps...
 
-### Section A (GitHub)
-
-### Section B (WhatsApp)
+### Known issues
 Was unable to install some of the required Python packages (like scipy), had to 
 install the following libs through brew. This also failed via a venv?!
 ```
