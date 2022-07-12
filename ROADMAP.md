@@ -54,9 +54,8 @@
 
 ## Open Broadcaster Software (OBS)
 - Create sample scene and config (done)
-- Create standard layouts
-- Draft tutorial guide
-
+- Create standard layouts (pending)
+- Draft tutorial guide (pending)
 ## Create web interface for OBS
 - Create SPA scaffolding with Nuxt (done)
 - POC with interactive view (done)
@@ -68,14 +67,19 @@
   - Alias with avatar
   - WhatsApp static content
 - MVP layouts
-  - Studio main
+  - Studio main, like https://youtu.be/Z_y_zeql7pc?t=1662
   - Weather
 
 ## Future ideas
-- Consider express API for web sockets, this will allow direct interaction with the interface for simpler recording
- - Move screens
- - Transitions
- - Etc
+- Create public web interface for 
+  - Guess who is who in groupchat (most messages/links/emotes/etc)
+    - Privacy will be key for this 
+    - Idea: Simple integration with WhatsApp. Link to web, respond with results. 
+- Consider express API for web sockets
+ - This will allow direct interaction with the interface for simpler recording
+ - Functions
+  - Create windows for reports, console, adds, etc, 
+  - Transitions
+  - Etc
 - Steal from https://github.com/HendrikPrinsZA/cowboy/tree/main/modules/core/api
-- Sample templates in OBS for funny adds
 - Symlink latest instance_id dir to latest, for simplified pathing

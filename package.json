@@ -14,7 +14,8 @@
     "test": "jest",
     "tools:repos_to_avatars": "python3 tools/repos_to_avatars.py",
     "tools:repos_to_videos": "python3 tools/repos_to_videos.py",
-    "tools:repos_to_stats": "python3 tools/repos_to_stats.py"
+    "tools:repos_to_stats": "python3 tools/repos_to_stats.py",
+    "tools:whatsapp_to_stats": "python3 tools/whatsapp_to_stats.py"
   },
   "lint-staged": {
     "*.**": "prettier --check --ignore-unknown"
@@ -34,6 +35,7 @@
     "babel-core": "7.0.0-bridge.0",
     "babel-jest": "^27.4.4",
     "eslint-config-prettier": "^8.3.0",
+    "git-stats": "^3.0.0",
     "husky": "^7.0.4",
     "jest": "^27.4.4",
     "lint-staged": "^12.1.2",

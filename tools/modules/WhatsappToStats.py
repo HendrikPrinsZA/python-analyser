@@ -9,6 +9,7 @@ from matplotlib.ticker import MaxNLocator
 from seaborn import *
 from wordcloud import WordCloud,STOPWORDS
 from nltk import *
+from modules.helpers import *
 
 from modules.helpers import save_list_as_json
 
@@ -24,9 +25,9 @@ class WhatsappToStats:
             print(f"Unable to find the file '{file_path}'")
 
         self.today = datetime.now().strftime("%Y-%m-%d")
-        self.path_to_base = os.path.realpath(f"{os.path.dirname(__file__)}/../")
-    
-        self.path_to_reports = f"{self.path_to_base}/storage/reports/whatsapp"
+        self.path_to_storage = get_path_to_storage()
+        self.path_to_reports = f"{self.path_to_storage}/reports/whatsapp"
+
         if not os.path.isdir(self.path_to_reports):
             os.makedirs(self.path_to_reports, exist_ok=True)
 
@@ -174,7 +175,6 @@ class WhatsappToStats:
         
         print(f"Shape: {data_frame.shape}")
         print(f"Unique authors: {data_frame['Author'].nunique()}")
-        # print(f"Authors: {data_frame['Author'].unique()}")
             
         print(f"Processing data")
         weeks = {
@@ -314,6 +314,7 @@ class WhatsappToStats:
         data_frame_top10 = data_frame_top10['Author'].value_counts()
         data_frame_top10 = data_frame_top10.head(10)
 
+        # Debugging
         # print(data_frame_top10)
         # exit(0)
 
@@ -365,9 +366,17 @@ class WhatsappToStats:
     def graph_top10_words(self, data_frame: pd.DataFrame):
         data_frame_top10 = data_frame[['Author', 'Words']].groupby('Author').sum()
         data_frame_top10 = data_frame_top10.sort_values('Words', ascending=False).head(10)
+        
+        # Debugging data frame
+        print('Preview of data frame')
+        print(data_frame)
 
         bars = list(data_frame_top10['Words'].keys())
         x_pos = np.arange(len(bars))
+        # print({
+        #     'bars': bars,
+        #     'x_pos': x_pos,
+        # })
         
         fig = plt.figure(figsize=(10,5))
         data_frame_top10.plot.bar()
@@ -380,7 +389,7 @@ class WhatsappToStats:
         path_to_file = f"{self.path_to_reports}/{self.today}-top10-words.png"
         fig.savefig(path_to_file)
         print(f"Saved to {path_to_file}")
-        plt.show()
+        # plt.show()
         plt.close()
 
     def show_data(self):
@@ -399,10 +408,10 @@ class WhatsappToStats:
         print(f"Saved as {path_to_file}")
 
         self.graph_top10_messages(self.data_frame)
-        self.graph_top10_media(self.data_frame)
-        self.graph_top10_links(self.data_frame)
+        # self.graph_top10_media(self.data_frame)
+        # self.graph_top10_links(self.data_frame)
         self.graph_top10_words(self.data_frame)
-        self.show_wordlist(self.data_frame)
+        # self.show_wordlist(self.data_frame)
 
 
     

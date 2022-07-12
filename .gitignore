@@ -156,3 +156,6 @@ dist
 # Project specific
 # don't track the instance reports
 storage/instances
+
+# Added ignore for Python bin?
+/bin
