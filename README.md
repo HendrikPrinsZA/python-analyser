@@ -1,21 +1,29 @@
 # Python Analyser
 Random project
 
-## Getting started (redo-this)
-...
-## Software to look into
-- https://obsproject.com/welcome
+## Getting started
+Install all required dependencies, follow the guides below.
 
-## Requirements (Brew)
+## Third party software
+- For streaming/recording see https://obsproject.com/welcome
+
+## Requirements
+System requirements.
+### MacOS via Brew
 - Gource: `brew install gource`
 - ffmpeg: `brew install ffmpeg`
 - arzzen/git-quick-stats: `brew install git-quick-stats`
 
-## Requirements (Python)
-- Dependencies: `python3 -m pip install -r requirements.txt`
+## Python
+- Install [Python3](https://www.python.org/downloads/)
+- Install all dependencies: `python3 -m pip install -r requirements.txt`
 
-### WhatsApp
-Generate stats from whatsapp exports
+# Tools
+The current tools are supported:
+- WhatsApp group stats
+- Git repositories to stats
+### WhatsApp group stats
+Generate stats from WhatsApp group chat exports
 
 #### Steps 
 1. Export a group chat 
@@ -25,8 +33,12 @@ Generate stats from whatsapp exports
 npm run tools:whatsapp_to_stats
 ```
 
-### GitHub
+### Git repositories
 Get stats from GitHub repositories
+
+- Create avatars from repos: `npm run tools:repos_to_avatars`
+- Create videos from repos: `npm run tools:repos_to_videos`
+- Create stats from repos: `npm run tools:repos_to_stats`
 
 #### Steps
 Add steps...
