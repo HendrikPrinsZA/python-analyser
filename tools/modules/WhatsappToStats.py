@@ -408,10 +408,10 @@ class WhatsappToStats:
         print(f"Saved as {path_to_file}")
 
         self.graph_top10_messages(self.data_frame)
-        # self.graph_top10_media(self.data_frame)
-        # self.graph_top10_links(self.data_frame)
+        self.graph_top10_media(self.data_frame)
+        self.graph_top10_links(self.data_frame)
         self.graph_top10_words(self.data_frame)
-        # self.show_wordlist(self.data_frame)
+        self.show_wordlist(self.data_frame)
 
 
     

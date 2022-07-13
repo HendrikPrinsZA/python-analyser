@@ -151,8 +151,8 @@ class ReposToStats:
 
     def line_to_alias_and_username(self, line:str) -> str and str:
         """
-        In 'Hendrik Prinsloo <info@hendrikprinsloo.co.za>:'
-        Out 'Hendrik Prinsloo' 'info@hendrikprinsloo.co.za'
+        In 'John Doe <johndoe@company.com>'
+        Out 'John Doe' 'johndoe@company.com>'
         """
         alias = None
         username = None
