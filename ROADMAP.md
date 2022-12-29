@@ -49,7 +49,7 @@
   - Top 10 words (broken)
   - Word list image (done)
 - Commit history strings for scroller
-- Anonymize the data by default, i.e. 'Hendrik' = 'Alias 1'
+- Anonymize the data by default, i.e. 'John Doe' = 'Alias 1'
   - See `~/cowboy/modules/local/sentiment/sentiment.py`
 
 ## Open Broadcaster Software (OBS)
