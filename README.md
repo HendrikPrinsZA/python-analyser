@@ -36,13 +36,13 @@ npm run tools:whatsapp_to_stats
 ### Git repositories
 Get stats from GitHub repositories
 
-- Create avatars from repos: `npm run tools:repos_to_avatars`
-- Create videos from repos: `npm run tools:repos_to_videos`
-- Create stats from repos: `npm run tools:repos_to_stats`
-
 #### Steps
-Add steps...
+1. Create avatars from repos: `npm run tools:repos_to_avatars`
+2. Create videos from repos: `npm run tools:repos_to_videos`
+3. Create stats from repos: `npm run tools:repos_to_stats`
 
+# Side notes
+Additional notes, dump space.
 ### Known issues
 Was unable to install some of the required Python packages (like scipy), had to 
 install the following libs through brew. This also failed via a venv?!

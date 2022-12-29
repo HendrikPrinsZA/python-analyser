@@ -52,10 +52,11 @@
 - Anonymize the data by default, i.e. 'Hendrik' = 'Alias 1'
   - See `~/cowboy/modules/local/sentiment/sentiment.py`
 
-## Open Broadcaster Software (OBS)
+## Open Broadcaster Software for OBS
 - Create sample scene and config (done)
 - Create standard layouts (pending)
 - Draft tutorial guide (pending)
+
 ## Create web interface for OBS
 - Create SPA scaffolding with Nuxt (done)
 - POC with interactive view (done)
@@ -83,3 +84,4 @@
   - Etc
 - Steal from https://github.com/HendrikPrinsZA/cowboy/tree/main/modules/core/api
 - Symlink latest instance_id dir to latest, for simplified pathing
+- Intergation with https://github.com/dmitryn/GitStats
